@@ -1,0 +1,26 @@
+export const verifyEmail = ({ title, postLink, otp, userMessage, userEmail, adminMessage }: { adminMessage?:string, userEmail?:string,userMessage?:string,title:string,postLink?:string,otp?:string  }):string => {
+    return  ` 
+        <h2 style="color:#333;text-align:center;">${title} 📧</h2>
+${
+      userEmail
+        ? `<p style="font-size:14px;color:#555; text-align:center">
+            User Email: <strong>${userEmail}</strong> ${userMessage || adminMessage}
+          </p>`
+        : ""
+    }    
+    
+        <p style="font-size:16px;color:#555; text-align:center">
+          ${otp || postLink||"" }
+        </p>
+        <div style="margin:30px 0;text-align:center;">
+         
+        </div>
+        <p style="font-size:14px;color:#999;text-align:center;">
+          If you did not sign up for this, please ignore this email.
+        </p>
+        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+        <p style="font-size:12px;color:#aaa;text-align:center;">
+          &copy; 2025 social app. All rights reserved.
+        </p>
+      </>`
+}
