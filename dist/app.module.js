@@ -17,6 +17,10 @@ const path_1 = require("path");
 const user_module_1 = require("./modules/user/user.module");
 const mongoose_1 = require("@nestjs/mongoose");
 const auth_module_2 = require("./common/modules/auth.module");
+const common_2 = require("./common");
+const brand_module_1 = require("./modules/brand/brand.module");
+const category_module_1 = require("./modules/category/category.module");
+const product_module_1 = require("./modules/product/product.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,9 +35,12 @@ exports.AppModule = AppModule = __decorate([
             auth_module_2.SharedAuthenticationModule,
             auth_module_1.AuthenticationModule,
             user_module_1.UserModule,
+            brand_module_1.BrandModule,
+            category_module_1.CategoryModule,
+            product_module_1.ProductModule
         ],
         controllers: [app_controller_1.AppController, auth_controller_1.AuthenticationController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, common_2.S3Service],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

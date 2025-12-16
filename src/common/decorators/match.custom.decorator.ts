@@ -5,7 +5,23 @@ import {
     ValidatorConstraintInterface,
     ValidationArguments,
 } from "class-validator";
+import { Types } from "mongoose";
 
+@ValidatorConstraint({ name: 'match_between_fields', async: false })
+export class MongoDbId
+    implements ValidatorConstraintInterface {
+    validate(ids: Types.ObjectId[], args: ValidationArguments): boolean {
+        for (const id of ids) {
+            if (!Types.ObjectId.isValid(id)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    defaultMessage(validationArguments?: ValidationArguments): string {
+        return `Invalid mongoDbId  formate`
+    } // run when return is false
+}
 @ValidatorConstraint({ name: 'match_between_fields', async: false })
 export class MatchBetweenFields<T = any> implements ValidatorConstraintInterface {
     validate(value: T, args: ValidationArguments) {

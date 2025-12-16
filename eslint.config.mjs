@@ -43,6 +43,9 @@ export default tseslint.config(
       "prefer-const": "off",
       "@typescript - eslint / no - unnecessary - type - assertion": "off",
       'prettier/prettier': 'off',
+      "@typescript-eslint/restrict-template-expressions":"off",
+      "@typescript-eslint/no-unsafe-function-type": "off"
+      
     },
   },
 );

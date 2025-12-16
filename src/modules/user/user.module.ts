@@ -1,13 +1,27 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
-import { TokenModel, TokenRepository, UserModel, UserRepository } from 'src/DB';
-import { JwtService } from '@nestjs/jwt';
-import { TokenService } from 'src/common';
+
 import{ PreAuth } from '../../common/middlewares/authentication.middleware';
 import { UserService } from './user.service';
+import { S3Service } from 'src/common';
 @Module({
-  imports: [],
-  providers: [UserService,],
+  imports: [
+    // MulterModule.register(
+    // {
+    // storage: diskStorage({
+    //   destination(req:Request, file:Express.Multer.File, callback:Function) {
+    //     callback(null,'./upload')
+    //   },
+    //   filename(req:Request, file:Express.Multer.File, callback:Function) {
+    //     const fileName = randomUUID()+"_"+Date.now()+"_"+file.originalname
+    //     callback(null,fileName)
+    //   },
+
+    // })
+    // }
+    // )
+  ],
+  providers: [UserService, S3Service],
   controllers: [UserController],
   exports: [],
 })

@@ -24,6 +24,7 @@ let User = class User {
     gender;
     preferredLanguage;
     changeCredentialsTime;
+    profilePicture;
     otp;
 };
 exports.User = User;
@@ -122,6 +123,12 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], User.prototype, "changeCredentialsTime", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({
+        type: String,
+    }),
+    __metadata("design:type", String)
+], User.prototype, "profilePicture", void 0);
 __decorate([
     (0, mongoose_1.Virtual)(),
     __metadata("design:type", Array)

@@ -16,6 +16,7 @@ exports.AuthenticationController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const signup_dto_1 = require("./dto/signup.dto");
+const common_2 = require("../../common");
 let AuthenticationController = class AuthenticationController {
     authService;
     constructor(authService) {
@@ -24,19 +25,19 @@ let AuthenticationController = class AuthenticationController {
     async signup(body) {
         console.log(body);
         await this.authService.signup(body);
-        return { message: 'Done' };
+        return (0, common_2.successResponse)();
     }
     async resendConfirmEmail(body) {
         await this.authService.resendConfirmEmail(body);
-        return { message: 'Done' };
+        return (0, common_2.successResponse)();
     }
     async confirmEmail(body) {
         await this.authService.confirmEmail(body);
-        return { message: 'Done' };
+        return (0, common_2.successResponse)();
     }
     async login(body) {
         const credentials = await this.authService.login(body);
-        return { message: "Done", data: { credentials } };
+        return (0, common_2.successResponse)({ message: "Done", data: { credentials } });
     }
 };
 exports.AuthenticationController = AuthenticationController;

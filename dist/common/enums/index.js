@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./user.enum"), exports);
 __exportStar(require("./otp.enum"), exports);
 __exportStar(require("./token.enum"), exports);
+__exportStar(require("./storage.enum"), exports);
 //# sourceMappingURL=index.js.map

@@ -1,7 +1,7 @@
 import { HydratedDocument } from "mongoose";
-import { GenderEnum, LanguageEnum, ProviderEnum, RoleEnum } from "src/common";
+import { GenderEnum, IUser, LanguageEnum, ProviderEnum, RoleEnum } from "src/common";
 import { OtpDocument } from "./otp.model";
-export declare class User {
+export declare class User implements IUser {
     firstName: string;
     lastName: string;
     username: string;
@@ -13,6 +13,7 @@ export declare class User {
     gender: GenderEnum;
     preferredLanguage: LanguageEnum;
     changeCredentialsTime: Date;
+    profilePicture?: string;
     otp: OtpDocument[];
 }
 export type UserDocument = HydratedDocument<User>;

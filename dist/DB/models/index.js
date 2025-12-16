@@ -17,4 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./user.model"), exports);
 __exportStar(require("./otp.model"), exports);
 __exportStar(require("./token.model"), exports);
+__exportStar(require("./brand.model"), exports);
+__exportStar(require("./category.model"), exports);
+__exportStar(require("./product.model"), exports);
 //# sourceMappingURL=index.js.map

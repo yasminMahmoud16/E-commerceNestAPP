@@ -11,15 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
+const common_2 = require("../../common");
 let UserService = class UserService {
-    constructor() { }
+    s3Service;
+    constructor(s3Service) {
+        this.s3Service = s3Service;
+    }
     allUsers() {
         return 'users';
+    }
+    ;
+    async profileImage(file, user) {
+        user.profilePicture = await this.s3Service.uploadFile({
+            file,
+            storageApproach: common_2.StorageEnum.disk,
+            path: `user/${user._id.toString()}`
+        });
+        await user.save();
+        return user;
     }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [common_2.S3Service])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

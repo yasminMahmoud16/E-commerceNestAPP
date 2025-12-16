@@ -11,6 +11,9 @@ exports.User = (0, common_1.createParamDecorator)((data, context) => {
         default:
             break;
     }
+    if (!req?.credentials?.user) {
+        return null;
+    }
     return req.credentials.user;
 });
 //# sourceMappingURL=credential.decorator.js.map

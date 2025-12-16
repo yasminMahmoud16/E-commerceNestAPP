@@ -20,6 +20,10 @@ export const User = createParamDecorator(
             default:
                 break;
         }
+
+        if (!req?.credentials?.user) {
+            return null; // أو throw new UnauthorizedException()
+        }
         return req.credentials.user;
     },
 );

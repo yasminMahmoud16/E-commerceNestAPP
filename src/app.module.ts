@@ -8,6 +8,10 @@ import { resolve } from 'path';
 import { UserModule } from './modules/user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedAuthenticationModule } from './common/modules/auth.module';
+import { S3Service } from './common';
+import { BrandModule } from './modules/brand/brand.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/product/product.module';
 
 @Module({
   imports: [
@@ -19,8 +23,12 @@ import { SharedAuthenticationModule } from './common/modules/auth.module';
     SharedAuthenticationModule,
     AuthenticationModule,
     UserModule,
+    BrandModule,
+    CategoryModule,
+    ProductModule
+    
   ],
   controllers: [AppController, AuthenticationController],
-  providers: [AppService],
+  providers: [AppService, S3Service ],
 })
 export class AppModule {}

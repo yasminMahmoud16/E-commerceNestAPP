@@ -25,7 +25,13 @@ export declare abstract class DatabaseRepository<TRowDocument, TDocument = Hydra
         options?: QueryOptions<TDocument> | undefined;
         page?: number | "all";
         size?: number;
-    }): Promise<TDocument[] | [] | Lean<TDocument>[] | any>;
+    }): Promise<{
+        docsCount?: number;
+        limit?: number;
+        page?: number;
+        currentPage?: number | undefined;
+        result: TDocument[] | Lean<TDocument>[];
+    }>;
     create({ data, options, }: {
         data: Partial<TRowDocument>[];
         options?: CreateOptions | undefined;
