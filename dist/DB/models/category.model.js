@@ -42,8 +42,11 @@ __decorate([
     __metadata("design:type", String)
 ], Category.prototype, "description", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String, required: true }),
-    __metadata("design:type", String)
+    (0, mongoose_1.Prop)((0, mongoose_1.raw)({
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true },
+    })),
+    __metadata("design:type", Object)
 ], Category.prototype, "image", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: "User", required: true }),

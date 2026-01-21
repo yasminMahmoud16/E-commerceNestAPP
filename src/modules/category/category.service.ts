@@ -1,9 +1,9 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { BrandRepository, CategoryDocument, CategoryRepository, Lean, UserDocument } from 'src/DB';
-import { FolderEnum, S3Service } from 'src/common';
+import { CloudService, FolderEnum, GetAllDto, IAttachment, S3Service } from 'src/common';
 import { Types } from 'mongoose';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { GetAllDto, UpdateCategoryDto } from './dto/update-category.dto';
+import {  UpdateCategoryDto } from './dto/update-category.dto';
 import { randomUUID } from 'crypto';
 // import { updateCategoryDto } from './dto/update-brand.dto';
 
@@ -14,6 +14,7 @@ export class CategoryService {
     private readonly categoryRepository: CategoryRepository,
     private readonly brandRepository: BrandRepository,
     private readonly s3Service: S3Service,
+    private readonly cloudinaryService: CloudService,
 
   ) { }
   async create(createCategoryDto: CreateCategoryDto,
@@ -41,10 +42,14 @@ export class CategoryService {
 
 
     let assetFolderId: string = randomUUID()
-    const image: string = await this.s3Service.uploadFile({
+    const image: IAttachment = await this.cloudinaryService.uploadFile({
       file,
       path: `${FolderEnum.Category}/${assetFolderId}`
     })
+    // const image: string = await this.s3Service.uploadFile({
+    //   file,
+    //   path: `${FolderEnum.Category}/${assetFolderId}`
+    // })
 
     console.log({ image });
 
@@ -62,7 +67,7 @@ export class CategoryService {
 
 
     if (!category) {
-      await this.s3Service.deleteFile({ Key: image })
+      await this.cloudinaryService.deleteFile({ public_id: image.public_id })
       throw new BadRequestException("Failed to create this category resource ")
     }
 
@@ -140,7 +145,7 @@ export class CategoryService {
       throw new NotFoundException("failed to find matching category instance ")
     }
 
-    const image = await this.s3Service.uploadFile({
+    const image = await this.cloudinaryService.uploadFile({
       file,
       path:`${FolderEnum.Category}/${category.assetFolderId}`
     })
@@ -156,10 +161,10 @@ export class CategoryService {
     });
 
     if (!updateCategory) {
-      await this.s3Service.deleteFile({ Key: image })
+      await this.cloudinaryService.deleteFile({ public_id: image.public_id });
       throw new NotFoundException("failed to find matching category instance ")
     }
-    await this.s3Service.deleteFile({ Key: category.image })
+    await this.cloudinaryService.deleteFile({ public_id: category.image.public_id })
     return updateCategory;
   }
 
@@ -192,10 +197,6 @@ export class CategoryService {
     return "category deleted successfully";
   }
   async restore(categoryId: Types.ObjectId, user: UserDocument): Promise<CategoryDocument | Lean<CategoryDocument>> {
-
-
-
-
     const category = await this.categoryRepository.findOneAndUpdate({
       filter: {
         _id: categoryId,
@@ -232,7 +233,7 @@ export class CategoryService {
     if (!category) {
       throw new NotFoundException("Fail to find matching result")
     }
-    await this.s3Service.deleteFile({ Key: category.image })
+    await this.cloudinaryService.deleteFile({ public_id: category.image.public_id })
     return "Done";
   }
 

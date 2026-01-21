@@ -1,10 +1,11 @@
 import { HydratedDocument, Types } from "mongoose";
 import { ICategory } from "src/common";
+import type { IAttachment } from "src/common/interfaces/multer.interface";
 export declare class Category implements ICategory {
     name: string;
     slug: string;
     description: string;
-    image: string;
+    image: IAttachment;
     createdBy: Types.ObjectId;
     updatedBy?: Types.ObjectId;
     brands?: Types.ObjectId[];

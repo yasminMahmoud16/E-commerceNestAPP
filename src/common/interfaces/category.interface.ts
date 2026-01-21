@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { IUser } from "./user.interface";
 import { IBrand } from "./brand.interface";
+import { IAttachment } from "./multer.interface";
 
 
 export interface ICategory{
@@ -8,7 +9,7 @@ export interface ICategory{
     name: string;
     slug: string;
     description?: string;
-    image: string;
+    image: IAttachment;
     brands?:Types.ObjectId[]|IBrand[]
 
     assetFolderId:string

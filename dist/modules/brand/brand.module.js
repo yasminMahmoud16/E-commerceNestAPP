@@ -25,7 +25,7 @@ exports.BrandModule = BrandModule = __decorate([
             ]),
         ],
         controllers: [brand_controller_1.BrandController],
-        providers: [brand_service_1.BrandService, brand_repository_1.BrandRepository, common_2.S3Service],
+        providers: [brand_service_1.BrandService, brand_repository_1.BrandRepository, common_2.S3Service, common_2.CloudService],
     })
 ], BrandModule);
 //# sourceMappingURL=brand.module.js.map

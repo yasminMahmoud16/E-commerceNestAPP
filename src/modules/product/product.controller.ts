@@ -1,13 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, UsePipes, ValidationPipe, Query, UploadedFiles } from '@nestjs/common';
-import { Auth, IResponse, successResponse, User } from 'src/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseFilePipe, UsePipes, ValidationPipe, Query, UploadedFiles } from '@nestjs/common';
+import { Auth, GetAllDto, GetAllResponse, IProduct, IResponse, StorageEnum, successResponse, User } from 'src/common';
 import type { UserDocument } from 'src/DB';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {  FilesInterceptor } from '@nestjs/platform-express';
 import { cloudFileUpload, fileValidation } from 'src/common/utils/multer';
 import { ProductService } from './product.service';
 import { endPoint } from './product.authorization.module';
 import { CreateProductDto } from './dto/create-product.dto';
-import { GetAllResponse, ProductResponse } from './entities/product.entity';
-import { GetAllDto, ProductParamDto, UpdateProductDto } from './dto/update-product.dto';
+import {  ProductResponse } from './entities/product.entity';
+import {  ProductParamDto, UpdateProductAttachmentDto, UpdateProductDto } from './dto/update-product.dto';
 
 
 @UsePipes(new ValidationPipe({whitelist:true,forbidNonWhitelisted:true}))
@@ -15,7 +15,10 @@ import { GetAllDto, ProductParamDto, UpdateProductDto } from './dto/update-produ
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseInterceptors(FilesInterceptor("attachments",5, cloudFileUpload({ validation: fileValidation.image })))
+  @UseInterceptors(FilesInterceptor("attachments", 5, cloudFileUpload({
+    storageApproach: StorageEnum.disk,
+    validation: fileValidation.image
+  })))
   @Auth(endPoint.create)
   @Post()
   async create(
@@ -41,36 +44,38 @@ export class ProductController {
   }
 
 
-  @UseInterceptors(FileInterceptor("attachment", cloudFileUpload({
-    validation:fileValidation.image
+  @UseInterceptors(FilesInterceptor("attachments", 5, cloudFileUpload({
+    storageApproach:StorageEnum.disk,
+    validation: fileValidation.image
   })))
   @Auth(endPoint.create)
   @Patch(':productId/attachment')
   async updateAttachment(
     @Param() params: ProductParamDto,
-    @UploadedFile(ParseFilePipe) file:Express.Multer.File,
-    @User()user:UserDocument
+    @Body() updateProductAttachmentDto: UpdateProductAttachmentDto,
+    @User()user:UserDocument,
+    @UploadedFiles(new ParseFilePipe({fileIsRequired:false})) files?:Express.Multer.File[]
   ): Promise<IResponse<ProductResponse>> {
 
-    const product = await this.productService.updateAttachment(params.productId, file, user);
+    const product = await this.productService.updateAttachment(params.productId, updateProductAttachmentDto,user, files);
     return successResponse<ProductResponse>({data:{product}})
   }
 
   @Get()
   async findAll(
     @Query() query:GetAllDto
-  ): Promise<IResponse<GetAllResponse>> {
+  ): Promise<IResponse<GetAllResponse<IProduct>>> {
     const result  = await this.productService.findAll(query);
-    return successResponse<GetAllResponse>({data:{result}})
+    return successResponse<GetAllResponse<IProduct>>({data:{result}})
   }
 
   @Auth(endPoint.create)
   @Get("archive")
   async findAllArchiveBrand(
     @Query() query:GetAllDto
-  ): Promise<IResponse<GetAllResponse>> {
+  ): Promise<IResponse<GetAllResponse<IProduct>>> {
     const result  = await this.productService.findAll(query, true);
-    return successResponse<GetAllResponse>({data:{result}})
+    return successResponse<GetAllResponse<IProduct>>({data:{result}})
   }
 
   @Get(':productId')

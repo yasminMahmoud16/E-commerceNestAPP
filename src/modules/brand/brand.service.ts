@@ -3,9 +3,10 @@ import { CreateBrandDto } from './dto/create-brand.dto';
 import {  Lean, UserDocument } from 'src/DB';
 import { BrandDocument } from '../../DB/models/brand.model';
 import { BrandRepository } from '../../DB/repository/brand.repository';
-import { FolderEnum, S3Service } from 'src/common';
+import { CloudService, FolderEnum, GetAllDto, IAttachment, S3Service } from 'src/common';
 import { Types } from 'mongoose';
-import { GetAllDto, UpdateBrandDto } from './dto/update-brand.dto';
+import {  UpdateBrandDto } from './dto/update-brand.dto';
+import { randomUUID } from 'node:crypto';
 // import { UpdateBrandDto } from './dto/update-brand.dto';
 
 @Injectable()
@@ -14,9 +15,11 @@ export class BrandService {
   constructor(
     private readonly brandRepository: BrandRepository,
     private readonly s3Service: S3Service,
+    private readonly cloudinaryService: CloudService,
     
   ){}
   async create(createBrandDto: CreateBrandDto, file: Express.Multer.File, user: UserDocument): Promise<BrandDocument> {
+    
     if (!user || !user._id) {
       throw new UnauthorizedException("User is required to create a brand");
     }
@@ -33,7 +36,13 @@ export class BrandService {
     }
 
     console.log({file});
-    const image: string = await this.s3Service.uploadFile({file, path:"Brand"})
+    // const image: string = await this.s3Service.uploadFile({file, path:"Brand"})
+    let assetFolderId: string = randomUUID()
+    const image: IAttachment = await this.cloudinaryService.uploadFile({
+          file,
+      path: `${FolderEnum.Brand}/${assetFolderId}`,
+      // timeout: 120000
+        })
 
     console.log({image});
     
@@ -50,8 +59,9 @@ export class BrandService {
     
 
     if (!brand) {
-      await this.s3Service.deleteFile({ Key: image })
-      throw new BadRequestException("Failed to create this brand resource ")
+      await this.cloudinaryService.deleteFile({ public_id: image.public_id })
+      // await this.s3Service.deleteFile({ Key: image })
+      throw new BadRequestException("Failed to create this brand resource")
     }
 
 
@@ -84,7 +94,7 @@ export class BrandService {
     user: UserDocument): Promise<BrandDocument | Lean<BrandDocument>> {
 
 
-    const image = await this.s3Service.uploadFile({file, path:FolderEnum.Brand})
+    const image = await this.cloudinaryService.uploadFile({file, path:FolderEnum.Brand})
     const brand = await this.brandRepository.findOneAndUpdate({
       filter: { _id: brandId },
       update: {
@@ -97,11 +107,11 @@ export class BrandService {
     });
 
     if (!brand) {
-      await this.s3Service.deleteFile({Key:image})
+      await this.cloudinaryService.deleteFile({ public_id: image.public_id });
       throw new NotFoundException("failed to find matching brand instance ")
     }
-    await this.s3Service.deleteFile({ Key: brand.image })
-    brand.image = image;
+    await this.cloudinaryService.deleteFile({ public_id: brand.image.public_id })
+    brand.image.public_id = image.public_id;
     return brand;
   }
 
@@ -174,7 +184,7 @@ export class BrandService {
     if (!brand) {
       throw new NotFoundException("Fail to find matching result")
     }
-    await this.s3Service.deleteFile({Key:brand.image})
+    await this.cloudinaryService.deleteFile({ public_id: brand.image.public_id })
     return "Done";
   }
 

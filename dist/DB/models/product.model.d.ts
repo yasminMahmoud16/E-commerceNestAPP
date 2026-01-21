@@ -1,11 +1,12 @@
 import { HydratedDocument, Types } from "mongoose";
+import type { IAttachment } from "src/common";
 import { IProduct } from "src/common/interfaces/product.interface";
 export declare class Product implements IProduct {
     name: string;
     slug: string;
     description: string;
-    image: string;
-    images: string[];
+    image: IAttachment;
+    images: IAttachment[];
     mainPrice: number;
     salePrice: number;
     discount: number;

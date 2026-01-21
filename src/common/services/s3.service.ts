@@ -6,9 +6,11 @@ import { createReadStream } from "fs";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+
 @Injectable()
 export class S3Service{
     private s3Client :S3Client
+    // private s3Client: ConfigOptions
     constructor() {
         this.s3Client = new S3Client({
             region: process.env.AWS_REGION as string,
@@ -20,6 +22,8 @@ export class S3Service{
     }
 
 
+    
+    
     uploadFile = async ({
         storageApproach = StorageEnum.memory,
         Bucket = process.env.AWS_BUcKET_NAME as string,
@@ -50,6 +54,7 @@ export class S3Service{
         }
         return command.input.Key
     };
+
     uploadLargeFile = async ({
         storageApproach = StorageEnum.disk,
         Bucket = process.env.AWS_BUcKET_NAME as string,

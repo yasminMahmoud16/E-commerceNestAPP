@@ -8,7 +8,7 @@ import { StorageEnum } from "src/common/enums"
 export const cloudFileUpload = ({
   storageApproach= StorageEnum.memory,
   validation = [],
-  fileSize=2
+  fileSize=10
 }: {
     storageApproach?: StorageEnum
     validation: string[],
@@ -16,15 +16,7 @@ export const cloudFileUpload = ({
 }):MulterOptions => {
     return {
       storage:
-        storageApproach === StorageEnum.memory ? memoryStorage() : diskStorage({
-        // destination takes temp path
-        destination: tmpdir(),
-        filename: function (req: Request, file: Express.Multer.File, callBack) {
-          callBack(null, `${randomUUID()}_${file.originalname}`);
-        }
-      }),
-
-      
+        storageApproach === StorageEnum.memory ? memoryStorage() : diskStorage({}),
         // for validation 
       fileFilter: (req: Request, file: Express.Multer.File, callback: Function) => {
         // contain the file uploaded
@@ -36,6 +28,7 @@ export const cloudFileUpload = ({
 
       limits: {
         fileSize: fileSize * 1024 * 1024, // from bytes to (MB)
+        
       }
     }
 }

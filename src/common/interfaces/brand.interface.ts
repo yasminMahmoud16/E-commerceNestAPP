@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { IUser } from "./user.interface";
+import { IAttachment } from "./multer.interface";
 
 
 export interface IBrand{
@@ -7,7 +8,7 @@ export interface IBrand{
     name: string;
     slug: string;
     slogan: string;
-    image: string;
+    image: IAttachment;
 
 
     createdBy: Types.ObjectId | IUser;

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { BrandService } from './brand.service';
 import { BrandController } from './brand.controller';
 import { BrandRepository } from '../../DB/repository/brand.repository';
-import { S3Service } from 'src/common';
+import { CloudService, S3Service } from 'src/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Brand, brandSchema } from 'src/DB/models/brand.model';
 
@@ -13,6 +13,6 @@ import { Brand, brandSchema } from 'src/DB/models/brand.model';
     ]),
   ],
   controllers: [BrandController],
-  providers: [BrandService, BrandRepository, S3Service],
+  providers: [BrandService, BrandRepository, S3Service, CloudService],
 })
 export class BrandModule {}

@@ -1,7 +1,7 @@
-import {  Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import {  Prop, raw, Schema, SchemaFactory } from "@nestjs/mongoose";
 import  { HydratedDocument, Types, UpdateQuery } from "mongoose";
 import slugify from "slugify";
-import { IBrand, ICategory } from "src/common";
+import type { IAttachment } from "src/common";
 import { IProduct } from "src/common/interfaces/product.interface";
 
 @Schema({timestamps:true, strictQuery:true})
@@ -15,11 +15,21 @@ export class Product implements IProduct {
     @Prop({ type: String, minlength: 2, maxlength: 50000 })
     description: string;
 
-    @Prop({type:String})
-    image: string;
+    // @Prop({type:String})
+    // image: string;
+     @Prop(raw({
+            secure_url: { type: String,  },
+            public_id: { type: String,  },
+        }))
+        image: IAttachment;
 
-    @Prop({type:[String],})
-    images: string[];
+    // @Prop({type:[String],})
+    // images: string[];
+    @Prop(raw([{
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true },
+    }]))
+    images: IAttachment[];
 
     @Prop({ type: Number, required: true })
     mainPrice: number;

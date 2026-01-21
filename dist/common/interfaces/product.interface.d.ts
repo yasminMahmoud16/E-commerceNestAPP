@@ -2,13 +2,14 @@ import { Types } from "mongoose";
 import { IUser } from "./user.interface";
 import { IBrand } from "./brand.interface";
 import { ICategory } from "./category.interface";
+import { IAttachment } from "./multer.interface";
 export interface IProduct {
     _id?: Types.ObjectId;
     name: string;
     slug: string;
     description?: string;
-    image?: string;
-    images: string[];
+    image?: IAttachment;
+    images: IAttachment[];
     assetFolderId: string;
     mainPrice: number;
     discount: number;

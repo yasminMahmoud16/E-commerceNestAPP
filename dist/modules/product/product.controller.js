@@ -34,8 +34,8 @@ let ProductController = class ProductController {
         const product = await this.productService.update(params.productId, updateProductDto, user);
         return (0, common_2.successResponse)({ data: { product } });
     }
-    async updateAttachment(params, file, user) {
-        const product = await this.productService.updateAttachment(params.productId, file, user);
+    async updateAttachment(params, updateProductAttachmentDto, user, files) {
+        const product = await this.productService.updateAttachment(params.productId, updateProductAttachmentDto, user, files);
         return (0, common_2.successResponse)({ data: { product } });
     }
     async findAll(query) {
@@ -69,7 +69,10 @@ let ProductController = class ProductController {
 };
 exports.ProductController = ProductController;
 __decorate([
-    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)("attachments", 5, (0, multer_1.cloudFileUpload)({ validation: multer_1.fileValidation.image }))),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)("attachments", 5, (0, multer_1.cloudFileUpload)({
+        storageApproach: common_2.StorageEnum.disk,
+        validation: multer_1.fileValidation.image
+    }))),
     (0, common_2.Auth)(product_authorization_module_1.endPoint.create),
     (0, common_1.Post)(),
     __param(0, (0, common_2.User)()),
@@ -91,23 +94,26 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "update", null);
 __decorate([
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("attachment", (0, multer_1.cloudFileUpload)({
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)("attachments", 5, (0, multer_1.cloudFileUpload)({
+        storageApproach: common_2.StorageEnum.disk,
         validation: multer_1.fileValidation.image
     }))),
     (0, common_2.Auth)(product_authorization_module_1.endPoint.create),
     (0, common_1.Patch)(':productId/attachment'),
     __param(0, (0, common_1.Param)()),
-    __param(1, (0, common_1.UploadedFile)(common_1.ParseFilePipe)),
+    __param(1, (0, common_1.Body)()),
     __param(2, (0, common_2.User)()),
+    __param(3, (0, common_1.UploadedFiles)(new common_1.ParseFilePipe({ fileIsRequired: false }))),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_product_dto_1.ProductParamDto, Object, Object]),
+    __metadata("design:paramtypes", [update_product_dto_1.ProductParamDto,
+        update_product_dto_1.UpdateProductAttachmentDto, Object, Array]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "updateAttachment", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_product_dto_1.GetAllDto]),
+    __metadata("design:paramtypes", [common_2.GetAllDto]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "findAll", null);
 __decorate([
@@ -115,7 +121,7 @@ __decorate([
     (0, common_1.Get)("archive"),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_product_dto_1.GetAllDto]),
+    __metadata("design:paramtypes", [common_2.GetAllDto]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "findAllArchiveBrand", null);
 __decorate([

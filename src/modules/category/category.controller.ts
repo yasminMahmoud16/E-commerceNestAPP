@@ -1,14 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, UsePipes, ValidationPipe, Query } from '@nestjs/common';
-import { Auth, IResponse, successResponse, User } from 'src/common';
+import { Auth, GetAllDto, GetAllResponse, ICategory, IResponse, StorageEnum, successResponse, User } from 'src/common';
 import type { UserDocument } from 'src/DB';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { cloudFileUpload, fileValidation } from 'src/common/utils/multer';
 import { endPoint } from './category.authorization.module';
-import { Types } from 'mongoose';
 import { CategoryService } from './category.service';
-import { CategoryResponse, GetAllResponse } from './entities/category.entity';
+import { CategoryResponse } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { CategoryParamDto, GetAllDto, UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoryParamDto,  UpdateCategoryDto } from './dto/update-category.dto';
 
 
 @UsePipes(new ValidationPipe({whitelist:true,forbidNonWhitelisted:true}))
@@ -18,7 +17,11 @@ export class CategoryController {
     private readonly categoryService: CategoryService,
   ) { }
 
-  @UseInterceptors(FileInterceptor("attachment", cloudFileUpload({ validation: fileValidation.image })))
+  @UseInterceptors(
+    FileInterceptor("attachment", cloudFileUpload({
+    storageApproach:StorageEnum.disk,
+    validation: fileValidation.image
+  })))
   @Auth(endPoint.create)
   @Post()
   async create(
@@ -61,18 +64,18 @@ export class CategoryController {
   @Get()
   async findAll(
     @Query() query:GetAllDto
-  ): Promise<IResponse<GetAllResponse>> {
+  ): Promise<IResponse<GetAllResponse<ICategory>>> {
     const result  = await this.categoryService.findAll(query);
-    return successResponse<GetAllResponse>({data:{result}})
+    return successResponse<GetAllResponse<ICategory>>({data:{result}})
   }
 
   @Auth(endPoint.create)
   @Get("archive")
   async findAllArchiveBrand(
     @Query() query:GetAllDto
-  ): Promise<IResponse<GetAllResponse>> {
+  ): Promise<IResponse<GetAllResponse<ICategory>>> {
     const result  = await this.categoryService.findAll(query, true);
-    return successResponse<GetAllResponse>({data:{result}})
+    return successResponse<GetAllResponse<ICategory>>({data:{result}})
   }
 
   @Get(':categoryId')

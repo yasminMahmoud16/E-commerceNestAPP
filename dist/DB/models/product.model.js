@@ -49,11 +49,17 @@ __decorate([
     __metadata("design:type", String)
 ], Product.prototype, "description", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String }),
-    __metadata("design:type", String)
+    (0, mongoose_1.Prop)((0, mongoose_1.raw)({
+        secure_url: { type: String, },
+        public_id: { type: String, },
+    })),
+    __metadata("design:type", Object)
 ], Product.prototype, "image", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [String], }),
+    (0, mongoose_1.Prop)((0, mongoose_1.raw)([{
+            secure_url: { type: String, required: true },
+            public_id: { type: String, required: true },
+        }])),
     __metadata("design:type", Array)
 ], Product.prototype, "images", void 0);
 __decorate([

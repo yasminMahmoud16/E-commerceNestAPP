@@ -1,7 +1,8 @@
-import {  Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import {  Prop, raw, Schema, SchemaFactory } from "@nestjs/mongoose";
 import  { HydratedDocument, Types, UpdateQuery } from "mongoose";
 import slugify from "slugify";
-import { ICategory } from "src/common";
+import {  ICategory } from "src/common";
+import type { IAttachment } from "src/common/interfaces/multer.interface";
 
 @Schema({timestamps:true, strictQuery:true})
 export class Category implements ICategory {
@@ -14,8 +15,12 @@ export class Category implements ICategory {
     @Prop({ type: String, minlength: 2, maxlength: 5000 })
     description: string;
 
-    @Prop({type:String, required:true})
-    image: string;
+    // @Prop({type:String, required:true})
+    @Prop(raw({
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true },
+    }))
+    image: IAttachment;
 
 
     

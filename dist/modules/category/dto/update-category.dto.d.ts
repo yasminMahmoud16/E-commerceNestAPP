@@ -7,9 +7,4 @@ export declare class UpdateCategoryDto extends UpdateCategoryDto_base {
 export declare class CategoryParamDto {
     categoryId: Types.ObjectId;
 }
-export declare class GetAllDto {
-    page: number;
-    size: number;
-    search: string;
-}
 export {};

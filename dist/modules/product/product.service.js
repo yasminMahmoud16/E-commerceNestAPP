@@ -20,17 +20,18 @@ let ProductService = class ProductService {
     categoryRepository;
     productRepository;
     s3Service;
-    constructor(brandRepository, categoryRepository, productRepository, s3Service) {
+    cloudinaryService;
+    constructor(brandRepository, categoryRepository, productRepository, s3Service, cloudinaryService) {
         this.brandRepository = brandRepository;
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.s3Service = s3Service;
+        this.cloudinaryService = cloudinaryService;
     }
     async create(createProductDto, files, user) {
         if (!user || !user._id) {
             throw new common_1.UnauthorizedException("User is required to create a brand");
         }
-        console.log({ d: createProductDto });
         const category = await this.categoryRepository.findOne({
             filter: { _id: createProductDto.category }
         });
@@ -45,7 +46,10 @@ let ProductService = class ProductService {
         }
         const { name, description, discount, mainPrice, stock } = createProductDto;
         let assetFolderId = (0, crypto_1.randomUUID)();
-        const images = await this.s3Service.uploadFiles({ files, path: `${common_2.FolderEnum.Category}/${createProductDto.category}/${common_2.FolderEnum.Product}/${assetFolderId}` });
+        const images = await this.cloudinaryService.uploadFiles({
+            files,
+            path: `${common_2.FolderEnum.Category}/${createProductDto.category}/${common_2.FolderEnum.Product}/${assetFolderId}`
+        });
         const [product] = await this.productRepository.create({
             data: [{
                     category: category._id,
@@ -67,39 +71,96 @@ let ProductService = class ProductService {
         return product;
     }
     async update(productId, updateProductDto, user) {
-        if (updateProductDto.name && await this.productRepository.findOne({ filter: { name: updateProductDto.name } })) {
-            throw new common_1.ConflictException("Duplicated brand name");
+        const findProduct = await this.productRepository.findOne({
+            filter: { _id: productId }
+        });
+        if (!findProduct) {
+            throw new common_1.NotFoundException("there is no result match");
+        }
+        if (updateProductDto.category) {
+            const category = await this.categoryRepository.findOne({
+                filter: { _id: updateProductDto.category }
+            });
+            if (!category) {
+                throw new common_1.NotFoundException("Failed to find matching category");
+            }
+        }
+        if (updateProductDto.brands) {
+            const brand = await this.brandRepository.findOne({
+                filter: { _id: updateProductDto.brands }
+            });
+            if (!brand) {
+                throw new common_1.NotFoundException("Failed to find matching brand");
+            }
+        }
+        let salePrice = findProduct.mainPrice;
+        if (updateProductDto.mainPrice || updateProductDto.discount) {
+            const mainPrice = updateProductDto.mainPrice ?? findProduct.mainPrice;
+            const discountPrice = updateProductDto.discount ?? findProduct.discount;
+            const finalPrice = mainPrice - (mainPrice * (discountPrice / 100));
+            salePrice = finalPrice > 0 ? finalPrice : 1;
         }
         const product = await this.productRepository.findOneAndUpdate({
             filter: { _id: productId },
             update: {
                 ...updateProductDto,
+                salePrice,
                 updatedBy: user._id
             }
         });
         if (!product) {
-            throw new common_1.NotFoundException("failed to find matching product instance ");
+            throw new common_1.BadRequestException("Failed to update this product resource ");
         }
         return product;
     }
-    async updateAttachment(productId, file, user) {
-        const image = await this.s3Service.uploadFile({ file, path: common_2.FolderEnum.Brand });
-        const product = await this.productRepository.findOneAndUpdate({
+    async updateAttachment(productId, updateProductAttachmentDto, user, files) {
+        const findProduct = await this.productRepository.findOne({
             filter: { _id: productId },
-            update: {
-                image,
-                updatedBy: user._id
-            },
             options: {
-                new: false
+                populate: [
+                    {
+                        path: "category"
+                    }
+                ]
             }
         });
-        if (!product) {
-            await this.s3Service.deleteFile({ Key: image });
-            throw new common_1.NotFoundException("failed to find matching product instance ");
+        if (!findProduct) {
+            throw new common_1.NotFoundException("there is no result match");
         }
-        await this.s3Service.deleteFile({ Key: product.image });
-        product.image = image;
+        let attachments = [];
+        if (files?.length) {
+            attachments = await this.cloudinaryService.uploadFiles({
+                files,
+                path: `${common_2.FolderEnum.Category}/${findProduct.category.assetFolderId}/${common_2.FolderEnum.Product}/${findProduct.assetFolderId}`
+            });
+        }
+        const removedAttachment = [...new Set(updateProductAttachmentDto.removedAttachment ?? [])];
+        const product = await this.productRepository.findOneAndUpdate({
+            filter: { _id: productId },
+            update: [
+                {
+                    $set: {
+                        images: {
+                            $setUnion: [
+                                {
+                                    $setDifference: [
+                                        "$images",
+                                        removedAttachment
+                                    ]
+                                },
+                                attachments
+                            ]
+                        },
+                        updatedBy: user._id
+                    }
+                }
+            ]
+        });
+        if (!product) {
+            await this.cloudinaryService.deleteFiles(attachments.map(img => img.public_id));
+            throw new common_1.BadRequestException("Failed to update this product resource ");
+        }
+        await this.cloudinaryService.deleteFiles(removedAttachment);
         return product;
     }
     async softDelete(productId, user) {
@@ -157,7 +218,7 @@ let ProductService = class ProductService {
         if (!product) {
             throw new common_1.NotFoundException("Fail to find matching result");
         }
-        await this.s3Service.deleteFile({ Key: product.image });
+        await this.cloudinaryService.deleteFiles(product.images.map(img => img.public_id));
         return "Done";
     }
     async findAll(data, archive = false) {
@@ -197,6 +258,7 @@ exports.ProductService = ProductService = __decorate([
     __metadata("design:paramtypes", [brand_repository_1.BrandRepository,
         DB_1.CategoryRepository,
         DB_1.ProductRepository,
-        common_2.S3Service])
+        common_2.S3Service,
+        common_2.CloudService])
 ], ProductService);
 //# sourceMappingURL=product.service.js.map

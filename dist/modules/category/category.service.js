@@ -19,10 +19,12 @@ let CategoryService = class CategoryService {
     categoryRepository;
     brandRepository;
     s3Service;
-    constructor(categoryRepository, brandRepository, s3Service) {
+    cloudinaryService;
+    constructor(categoryRepository, brandRepository, s3Service, cloudinaryService) {
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.s3Service = s3Service;
+        this.cloudinaryService = cloudinaryService;
     }
     async create(createCategoryDto, file, user) {
         if (!user || !user._id) {
@@ -40,7 +42,7 @@ let CategoryService = class CategoryService {
             throw new common_1.NotFoundException("some of mentioned brands are not exists");
         }
         let assetFolderId = (0, crypto_1.randomUUID)();
-        const image = await this.s3Service.uploadFile({
+        const image = await this.cloudinaryService.uploadFile({
             file,
             path: `${common_2.FolderEnum.Category}/${assetFolderId}`
         });
@@ -56,7 +58,7 @@ let CategoryService = class CategoryService {
         });
         console.log({ category });
         if (!category) {
-            await this.s3Service.deleteFile({ Key: image });
+            await this.cloudinaryService.deleteFile({ public_id: image.public_id });
             throw new common_1.BadRequestException("Failed to create this category resource ");
         }
         return category;
@@ -109,7 +111,7 @@ let CategoryService = class CategoryService {
         if (!category) {
             throw new common_1.NotFoundException("failed to find matching category instance ");
         }
-        const image = await this.s3Service.uploadFile({
+        const image = await this.cloudinaryService.uploadFile({
             file,
             path: `${common_2.FolderEnum.Category}/${category.assetFolderId}`
         });
@@ -124,10 +126,10 @@ let CategoryService = class CategoryService {
             }
         });
         if (!updateCategory) {
-            await this.s3Service.deleteFile({ Key: image });
+            await this.cloudinaryService.deleteFile({ public_id: image.public_id });
             throw new common_1.NotFoundException("failed to find matching category instance ");
         }
-        await this.s3Service.deleteFile({ Key: category.image });
+        await this.cloudinaryService.deleteFile({ public_id: category.image.public_id });
         return updateCategory;
     }
     async softDelete(categoryId, user) {
@@ -185,7 +187,7 @@ let CategoryService = class CategoryService {
         if (!category) {
             throw new common_1.NotFoundException("Fail to find matching result");
         }
-        await this.s3Service.deleteFile({ Key: category.image });
+        await this.cloudinaryService.deleteFile({ public_id: category.image.public_id });
         return "Done";
     }
     async findAll(data, archive = false) {
@@ -224,6 +226,7 @@ exports.CategoryService = CategoryService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [DB_1.CategoryRepository,
         DB_1.BrandRepository,
-        common_2.S3Service])
+        common_2.S3Service,
+        common_2.CloudService])
 ], CategoryService);
 //# sourceMappingURL=category.service.js.map

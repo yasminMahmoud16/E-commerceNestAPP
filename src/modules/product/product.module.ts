@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { S3Service } from 'src/common';
+import { CloudService, S3Service } from 'src/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductController } from './product.controller';
 import {  Brand, BrandRepository, brandSchema, Category, CategoryRepository, categorySchema, Product, ProductRepository, productSchema } from 'src/DB';
@@ -14,6 +14,6 @@ import { ProductService } from './product.service';
     ]),
   ],
   controllers: [ProductController],
-  providers: [ProductService, ProductRepository, BrandRepository,CategoryRepository, S3Service],
+  providers: [ProductService, ProductRepository, BrandRepository, CategoryRepository, S3Service, CloudService],
 })
 export class ProductModule {}

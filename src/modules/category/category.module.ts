@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { S3Service } from 'src/common';
+import { CloudService, S3Service } from 'src/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
@@ -13,6 +13,6 @@ import { Brand, BrandRepository, brandSchema, Category, CategoryRepository, cate
     ]),
   ],
   controllers: [CategoryController],
-  providers: [CategoryService, CategoryRepository, BrandRepository, S3Service],
+  providers: [CategoryService, CategoryRepository, BrandRepository, S3Service, CloudService],
 })
 export class CategoryModule {}

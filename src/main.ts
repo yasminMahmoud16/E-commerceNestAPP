@@ -18,7 +18,12 @@ async function bootstrap() {
     // skipMissingProperties:true //both null and undefined 
   }));
 
-  app.use("/upload",express.static(path.resolve("./upload")))
+  app.use("/upload", express.static(path.resolve("./upload")))
+  // app.use((req, res, next) => {
+  //   req.setTimeout(300000);
+  //   res.setTimeout(300000);
+  //   next();
+  // });
   app.useGlobalInterceptors(new LoggingInterceptor)
   await app.listen(port, () => {
     console.log(`Server is running in port::: ${port} 🌸🚀`);

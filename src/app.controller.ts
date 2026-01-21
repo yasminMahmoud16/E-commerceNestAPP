@@ -1,10 +1,11 @@
 import { BadRequestException, Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { AppService } from './app.service';
-import { S3Service } from './common';
+// import { S3Service } from './common';
 import type { Response } from 'express';
 // import { S3Service } from './common';
 import { promisify } from "node:util";
 import { pipeline } from "node:stream";
+import { S3Service } from './common';
 
 const createWriteStreamPip = promisify(pipeline) //return pipeline with async/await 
 // localhost:3000/

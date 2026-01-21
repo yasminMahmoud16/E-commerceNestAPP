@@ -1,7 +1,7 @@
-import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import {  Prop, raw, Schema, SchemaFactory } from "@nestjs/mongoose";
 import  { HydratedDocument, Types, UpdateQuery } from "mongoose";
 import slugify from "slugify";
-import { IBrand,  OtpEnum } from "src/common";
+import type{ IAttachment, IBrand } from "src/common";
 
 @Schema({timestamps:true, strictQuery:true})
 export class Brand implements IBrand {
@@ -11,8 +11,13 @@ export class Brand implements IBrand {
     slug: string;
     @Prop({ type: String, required: true, minlength: 2, maxlength: 25 })
     slogan: string;
-    @Prop({type:String, required:true})
-    image: string;
+    // @Prop({type:String, required:true})
+    // image: string;
+    @Prop(raw({
+            secure_url: { type: String, required: true },
+            public_id: { type: String, required: true },
+        }))
+        image: IAttachment;
 
 
     

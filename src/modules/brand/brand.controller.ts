@@ -1,15 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, UsePipes, ValidationPipe, Query } from '@nestjs/common';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
-import { Auth, IResponse, successResponse, User } from 'src/common';
+import { Auth, GetAllDto, GetAllResponse, IBrand, IResponse, StorageEnum, successResponse, User } from 'src/common';
 import type { UserDocument } from 'src/DB';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { cloudFileUpload, fileValidation } from 'src/common/utils/multer';
-import { BrandResponse, GetAllResponse } from './entities/brand.entity';
+import { BrandResponse } from './entities/brand.entity';
 import { endPoint } from './brand.authorization.module';
-import { BrandParamDto, GetAllDto } from './dto/update-brand.dto';
+import { BrandParamDto } from './dto/update-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { Types } from 'mongoose';
 
 
 @UsePipes(new ValidationPipe({whitelist:true,forbidNonWhitelisted:true}))
@@ -17,7 +16,10 @@ import { Types } from 'mongoose';
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
-  @UseInterceptors(FileInterceptor("attachment", cloudFileUpload({ validation: fileValidation.image })))
+  @UseInterceptors(FileInterceptor("attachment", cloudFileUpload({
+    storageApproach:StorageEnum.disk,
+    validation: fileValidation.image
+  })))
   @Auth(endPoint.create)
   @Post()
   async create(
@@ -60,18 +62,18 @@ export class BrandController {
   @Get()
   async findAll(
     @Query() query:GetAllDto
-  ): Promise<IResponse<GetAllResponse>> {
+  ): Promise<IResponse<GetAllResponse<IBrand>>>{
     const result  = await this.brandService.findAll(query);
-    return successResponse<GetAllResponse>({data:{result}})
+    return successResponse<GetAllResponse<IBrand>>({data:{result}})
   }
 
   @Auth(endPoint.create)
   @Get("archive")
   async findAllArchiveBrand(
     @Query() query:GetAllDto
-  ): Promise<IResponse<GetAllResponse>> {
+  ): Promise<IResponse<GetAllResponse<IBrand>>> {
     const result  = await this.brandService.findAll(query, true);
-    return successResponse<GetAllResponse>({data:{result}})
+    return successResponse<GetAllResponse<IBrand>>({data:{result}})
   }
 
   @Get(':brandId')

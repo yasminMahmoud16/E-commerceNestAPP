@@ -70,7 +70,10 @@ let BrandController = class BrandController {
 };
 exports.BrandController = BrandController;
 __decorate([
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("attachment", (0, multer_1.cloudFileUpload)({ validation: multer_1.fileValidation.image }))),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("attachment", (0, multer_1.cloudFileUpload)({
+        storageApproach: common_2.StorageEnum.disk,
+        validation: multer_1.fileValidation.image
+    }))),
     (0, common_2.Auth)(brand_authorization_module_1.endPoint.create),
     (0, common_1.Post)(),
     __param(0, (0, common_2.User)()),
@@ -108,7 +111,7 @@ __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_brand_dto_1.GetAllDto]),
+    __metadata("design:paramtypes", [common_2.GetAllDto]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "findAll", null);
 __decorate([
@@ -116,7 +119,7 @@ __decorate([
     (0, common_1.Get)("archive"),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_brand_dto_1.GetAllDto]),
+    __metadata("design:paramtypes", [common_2.GetAllDto]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "findAllArchiveBrand", null);
 __decorate([

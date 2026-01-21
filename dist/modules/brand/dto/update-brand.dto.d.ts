@@ -6,9 +6,4 @@ export declare class UpdateBrandDto extends UpdateBrandDto_base {
 export declare class BrandParamDto {
     brandId: Types.ObjectId;
 }
-export declare class GetAllDto {
-    page: number;
-    size: number;
-    search: string;
-}
 export {};

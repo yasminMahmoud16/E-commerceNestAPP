@@ -13,12 +13,15 @@ exports.BrandService = void 0;
 const common_1 = require("@nestjs/common");
 const brand_repository_1 = require("../../DB/repository/brand.repository");
 const common_2 = require("../../common");
+const node_crypto_1 = require("node:crypto");
 let BrandService = class BrandService {
     brandRepository;
     s3Service;
-    constructor(brandRepository, s3Service) {
+    cloudinaryService;
+    constructor(brandRepository, s3Service, cloudinaryService) {
         this.brandRepository = brandRepository;
         this.s3Service = s3Service;
+        this.cloudinaryService = cloudinaryService;
     }
     async create(createBrandDto, file, user) {
         if (!user || !user._id) {
@@ -32,7 +35,11 @@ let BrandService = class BrandService {
             throw new common_1.ConflictException(checkDuplicate.freezedAt ? "Duplicated with archived brand" : "Duplicated Brand Name");
         }
         console.log({ file });
-        const image = await this.s3Service.uploadFile({ file, path: "Brand" });
+        let assetFolderId = (0, node_crypto_1.randomUUID)();
+        const image = await this.cloudinaryService.uploadFile({
+            file,
+            path: `${common_2.FolderEnum.Brand}/${assetFolderId}`,
+        });
         console.log({ image });
         const [brand] = await this.brandRepository.create({
             data: [{
@@ -44,8 +51,8 @@ let BrandService = class BrandService {
         });
         console.log({ brand });
         if (!brand) {
-            await this.s3Service.deleteFile({ Key: image });
-            throw new common_1.BadRequestException("Failed to create this brand resource ");
+            await this.cloudinaryService.deleteFile({ public_id: image.public_id });
+            throw new common_1.BadRequestException("Failed to create this brand resource");
         }
         return brand;
     }
@@ -66,7 +73,7 @@ let BrandService = class BrandService {
         return brand;
     }
     async updateAttachment(brandId, file, user) {
-        const image = await this.s3Service.uploadFile({ file, path: common_2.FolderEnum.Brand });
+        const image = await this.cloudinaryService.uploadFile({ file, path: common_2.FolderEnum.Brand });
         const brand = await this.brandRepository.findOneAndUpdate({
             filter: { _id: brandId },
             update: {
@@ -78,11 +85,11 @@ let BrandService = class BrandService {
             }
         });
         if (!brand) {
-            await this.s3Service.deleteFile({ Key: image });
+            await this.cloudinaryService.deleteFile({ public_id: image.public_id });
             throw new common_1.NotFoundException("failed to find matching brand instance ");
         }
-        await this.s3Service.deleteFile({ Key: brand.image });
-        brand.image = image;
+        await this.cloudinaryService.deleteFile({ public_id: brand.image.public_id });
+        brand.image.public_id = image.public_id;
         return brand;
     }
     async softDelete(brandId, user) {
@@ -140,7 +147,7 @@ let BrandService = class BrandService {
         if (!brand) {
             throw new common_1.NotFoundException("Fail to find matching result");
         }
-        await this.s3Service.deleteFile({ Key: brand.image });
+        await this.cloudinaryService.deleteFile({ public_id: brand.image.public_id });
         return "Done";
     }
     async findAll(data, archive = false) {
@@ -178,6 +185,7 @@ exports.BrandService = BrandService;
 exports.BrandService = BrandService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [brand_repository_1.BrandRepository,
-        common_2.S3Service])
+        common_2.S3Service,
+        common_2.CloudService])
 ], BrandService);
 //# sourceMappingURL=brand.service.js.map

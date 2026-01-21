@@ -1,6 +1,6 @@
 import { AppService } from './app.service';
-import { S3Service } from './common';
 import type { Response } from 'express';
+import { S3Service } from './common';
 export declare class AppController {
     private readonly appService;
     private readonly s3Service;

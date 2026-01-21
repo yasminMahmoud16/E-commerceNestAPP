@@ -22,4 +22,5 @@ __exportStar(require("./utils"), exports);
 __exportStar(require("./entities"), exports);
 __exportStar(require("./middlewares"), exports);
 __exportStar(require("./services"), exports);
+__exportStar(require("./dtos"), exports);
 //# sourceMappingURL=index.js.map

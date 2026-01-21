@@ -69,7 +69,10 @@ let CategoryController = class CategoryController {
 };
 exports.CategoryController = CategoryController;
 __decorate([
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("attachment", (0, multer_1.cloudFileUpload)({ validation: multer_1.fileValidation.image }))),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("attachment", (0, multer_1.cloudFileUpload)({
+        storageApproach: common_2.StorageEnum.disk,
+        validation: multer_1.fileValidation.image
+    }))),
     (0, common_2.Auth)(category_authorization_module_1.endPoint.create),
     (0, common_1.Post)(),
     __param(0, (0, common_2.User)()),
@@ -107,7 +110,7 @@ __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_category_dto_1.GetAllDto]),
+    __metadata("design:paramtypes", [common_2.GetAllDto]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "findAll", null);
 __decorate([
@@ -115,7 +118,7 @@ __decorate([
     (0, common_1.Get)("archive"),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_category_dto_1.GetAllDto]),
+    __metadata("design:paramtypes", [common_2.GetAllDto]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "findAllArchiveBrand", null);
 __decorate([
