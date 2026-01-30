@@ -4,6 +4,7 @@ import { UserController } from './user.controller';
 import{ PreAuth } from '../../common/middlewares/authentication.middleware';
 import { UserService } from './user.service';
 import { S3Service } from 'src/common';
+import { UserRepository } from 'src/DB';
 @Module({
   imports: [
     // MulterModule.register(
@@ -21,7 +22,7 @@ import { S3Service } from 'src/common';
     // }
     // )
   ],
-  providers: [UserService, S3Service],
+  providers: [UserService, S3Service, UserRepository],
   controllers: [UserController],
   exports: [],
 })

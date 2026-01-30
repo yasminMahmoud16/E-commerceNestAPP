@@ -1,4 +1,4 @@
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { GenderEnum, IUser, LanguageEnum, ProviderEnum, RoleEnum } from "src/common";
 import { OtpDocument } from "./otp.model";
 export declare class User implements IUser {
@@ -15,14 +15,15 @@ export declare class User implements IUser {
     changeCredentialsTime: Date;
     profilePicture?: string;
     otp: OtpDocument[];
+    wishlist?: Types.ObjectId[];
 }
 export type UserDocument = HydratedDocument<User>;
 export declare const userSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, import("mongoose").Document<unknown, any, User, any, {}> & User & {
-    _id: import("mongoose").Types.ObjectId;
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, User, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<User>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<User> & {
-    _id: import("mongoose").Types.ObjectId;
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }>;

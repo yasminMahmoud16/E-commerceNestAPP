@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ParseFilePipe, UsePipes, ValidationPipe, Query, UploadedFiles } from '@nestjs/common';
-import { Auth, GetAllDto, GetAllResponse, IProduct, IResponse, StorageEnum, successResponse, User } from 'src/common';
+import { Auth, GetAllDto, GetAllResponse, IProduct, IResponse, RoleEnum, StorageEnum, successResponse, User } from 'src/common';
 import type { UserDocument } from 'src/DB';
 import {  FilesInterceptor } from '@nestjs/platform-express';
 import { cloudFileUpload, fileValidation } from 'src/common/utils/multer';
@@ -118,5 +118,26 @@ export class ProductController {
     @User() user: UserDocument) {
       await this.productService.remove(params.productId, user);
     return successResponse();
+  }
+
+
+  // wishList
+  @Auth([RoleEnum.user])
+  @Patch(":productId/add-to-wishlist")
+  async addToWishlist(
+    @User() user: UserDocument,
+    @Param() params:ProductParamDto
+  ):Promise<IResponse<ProductResponse>> {
+    const product = await this.productService.addToWishlist(params.productId, user)
+    return successResponse<ProductResponse>({ data: { product } })
+  }
+  @Auth([RoleEnum.user])
+  @Patch(":productId/remove-from-wishlist")
+  async removeFromWishlist(
+    @User() user: UserDocument,
+    @Param() params:ProductParamDto
+  ):Promise<IResponse> {
+      await this.productService.removeFromWishlist(params.productId, user)
+    return successResponse()
   }
 }

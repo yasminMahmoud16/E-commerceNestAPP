@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CategoryDocument, CategoryRepository, Lean, ProductDocument, ProductRepository, UserDocument } from 'src/DB';
+import { CategoryDocument, CategoryRepository, Lean, ProductDocument, ProductRepository, UserDocument, UserRepository } from 'src/DB';
 import { BrandRepository } from '../../DB/repository/brand.repository';
 import { CloudService, FolderEnum, GetAllDto, IAttachment, S3Service } from 'src/common';
 import { Types } from 'mongoose';
@@ -15,7 +15,8 @@ export class ProductService {
     private readonly brandRepository: BrandRepository,
     private readonly categoryRepository: CategoryRepository,
     private readonly productRepository: ProductRepository,
-    private readonly s3Service: S3Service,
+    private readonly userRepository: UserRepository,
+    // private readonly s3Service: S3Service,
     private readonly cloudinaryService: CloudService
 
   ) { }
@@ -331,6 +332,43 @@ export class ProductService {
       throw new NotFoundException("failed to find matching product")
     }
     return product;
+  }
+
+  // wishList
+  async addToWishlist(productId: Types.ObjectId, user: UserDocument)
+    : Promise<ProductDocument | Lean<ProductDocument>> {
+    const product = await this.productRepository.findOne({
+      filter: {
+        _id: productId,
+      },
+
+    })
+    if (!product) {
+      throw new NotFoundException("failed to find matching product")
+    }
+
+    await this.userRepository.updateOne({
+      filter: {
+        _id:user._id
+      },
+      update: {
+        $addToSet:{wishlist:product._id}
+      }
+    })
+    return product;
+  }
+  async removeFromWishlist(productId: Types.ObjectId, user: UserDocument)
+    : Promise<String> {
+
+    await this.userRepository.updateOne({
+      filter: {
+        _id:user._id
+      },
+      update: {
+        $pull:{wishlist:Types.ObjectId.createFromHexString(productId as unknown as string)}
+      }
+    })
+    return "Done";
   }
 
 

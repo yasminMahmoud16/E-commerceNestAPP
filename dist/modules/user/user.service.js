@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const common_2 = require("../../common");
+const DB_1 = require("../../DB");
 let UserService = class UserService {
     s3Service;
-    constructor(s3Service) {
+    userRepository;
+    constructor(s3Service, userRepository) {
         this.s3Service = s3Service;
+        this.userRepository = userRepository;
     }
     allUsers() {
         return 'users';
@@ -30,10 +33,29 @@ let UserService = class UserService {
         await user.save();
         return user;
     }
+    async profile(user) {
+        const profile = await this.userRepository.findOne({
+            filter: {
+                _id: user._id
+            },
+            options: {
+                populate: [
+                    {
+                        path: "wishlist"
+                    }
+                ]
+            }
+        });
+        if (!profile) {
+            throw new common_1.NotFoundException("Faild to find matching user");
+        }
+        return profile;
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [common_2.S3Service])
+    __metadata("design:paramtypes", [common_2.S3Service,
+        DB_1.UserRepository])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

@@ -18,7 +18,6 @@ const user_service_1 = require("./user.service");
 const common_2 = require("../../common");
 const auth_decorator_1 = require("../../common/decorators/auth.decorator");
 const interceptors_1 = require("../../common/interceptors");
-const rxjs_1 = require("rxjs");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("../../common/utils/multer");
 let UserController = class UserController {
@@ -26,12 +25,9 @@ let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
     }
-    profile(header, user) {
-        console.log({
-            lang: header["accept-language"],
-            user,
-        });
-        return (0, rxjs_1.of)([{ message: 'DONE' }]).pipe((0, rxjs_1.delay)(200));
+    async profile(user) {
+        const profile = await this.userService.profile(user);
+        return (0, common_2.successResponse)({ data: { profile } });
     }
     allUsers() {
         return { message: 'DONE' };
@@ -52,11 +48,10 @@ __decorate([
     (0, common_1.UseInterceptors)(interceptors_1.PreferredLanguageInterceptor),
     (0, auth_decorator_1.Auth)([common_2.RoleEnum.admin, common_2.RoleEnum.user]),
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Headers)()),
-    __param(1, (0, common_2.User)()),
+    __param(0, (0, common_2.User)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", rxjs_1.Observable)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "profile", null);
 __decorate([
     (0, common_1.Get)(),
