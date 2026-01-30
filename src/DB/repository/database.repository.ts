@@ -13,7 +13,6 @@ export abstract class DatabaseRepository<TRowDocument, TDocument=HydratedDocumen
         select?: ProjectionType<TRowDocument> | null,
         options?: QueryOptions<TDocument> | null
     }): Promise<
-        Lean<TDocument>
         | TDocument
         | null
     > {
@@ -217,7 +216,7 @@ export abstract class DatabaseRepository<TRowDocument, TDocument=HydratedDocumen
             filter?: RootFilterQuery<TRowDocument>,
         update?: UpdateQuery<TDocument>,
         options?: QueryOptions<TDocument> | null
-        }): Promise<TDocument | Lean<TDocument> | null> {
+        }): Promise<TDocument  | null> {
         if (Array.isArray(update)) {
             update.push({
                 $set: {
