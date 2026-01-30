@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, MaxFileSizeValidator, ParseFilePipe, Patch, Req, SetMetadata, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Headers, MaxFileSizeValidator, ParseFilePipe, Patch, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import {  RoleEnum, StorageEnum, successResponse, User } from 'src/common';
 import type{ IMulterFile, IResponse, IUser } from 'src/common';
@@ -20,15 +20,13 @@ export class UserController {
   // @Roles([RoleEnum.user])
   // @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Get()
-  profile(
-    @Headers() header:any,
+  async profile(
+    // @Headers() header:any,
     @User() user:UserDocument
-  ): Observable<any> {
-    console.log({
-      lang:header["accept-language"],
-      user,
-    });
-    return of([{message: 'DONE'}]).pipe(delay(200))
+  ): Promise<IResponse<profileResponse>> {
+
+    const profile = await this.userService.profile(user)
+    return successResponse({data:{profile}})
     // return { message: 'DONE' };
   }
   @Get()

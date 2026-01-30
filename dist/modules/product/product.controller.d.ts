@@ -29,4 +29,6 @@ export declare class ProductController {
         status: number;
         data: any;
     }>;
+    addToWishlist(user: UserDocument, params: ProductParamDto): Promise<IResponse<ProductResponse>>;
+    removeFromWishlist(user: UserDocument, params: ProductParamDto): Promise<IResponse>;
 }

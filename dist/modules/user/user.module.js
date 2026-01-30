@@ -12,6 +12,7 @@ const user_controller_1 = require("./user.controller");
 const authentication_middleware_1 = require("../../common/middlewares/authentication.middleware");
 const user_service_1 = require("./user.service");
 const common_2 = require("../../common");
+const DB_1 = require("../../DB");
 let UserModule = class UserModule {
     configure(consumer) {
         consumer
@@ -23,7 +24,7 @@ exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
         imports: [],
-        providers: [user_service_1.UserService, common_2.S3Service],
+        providers: [user_service_1.UserService, common_2.S3Service, DB_1.UserRepository],
         controllers: [user_controller_1.UserController],
         exports: [],
     })

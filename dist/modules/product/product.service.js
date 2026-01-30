@@ -14,18 +14,19 @@ const common_1 = require("@nestjs/common");
 const DB_1 = require("../../DB");
 const brand_repository_1 = require("../../DB/repository/brand.repository");
 const common_2 = require("../../common");
+const mongoose_1 = require("mongoose");
 const crypto_1 = require("crypto");
 let ProductService = class ProductService {
     brandRepository;
     categoryRepository;
     productRepository;
-    s3Service;
+    userRepository;
     cloudinaryService;
-    constructor(brandRepository, categoryRepository, productRepository, s3Service, cloudinaryService) {
+    constructor(brandRepository, categoryRepository, productRepository, userRepository, cloudinaryService) {
         this.brandRepository = brandRepository;
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
-        this.s3Service = s3Service;
+        this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
     }
     async create(createProductDto, files, user) {
@@ -251,6 +252,36 @@ let ProductService = class ProductService {
         }
         return product;
     }
+    async addToWishlist(productId, user) {
+        const product = await this.productRepository.findOne({
+            filter: {
+                _id: productId,
+            },
+        });
+        if (!product) {
+            throw new common_1.NotFoundException("failed to find matching product");
+        }
+        await this.userRepository.updateOne({
+            filter: {
+                _id: user._id
+            },
+            update: {
+                $addToSet: { wishlist: product._id }
+            }
+        });
+        return product;
+    }
+    async removeFromWishlist(productId, user) {
+        await this.userRepository.updateOne({
+            filter: {
+                _id: user._id
+            },
+            update: {
+                $pull: { wishlist: mongoose_1.Types.ObjectId.createFromHexString(productId) }
+            }
+        });
+        return "Done";
+    }
 };
 exports.ProductService = ProductService;
 exports.ProductService = ProductService = __decorate([
@@ -258,7 +289,7 @@ exports.ProductService = ProductService = __decorate([
     __metadata("design:paramtypes", [brand_repository_1.BrandRepository,
         DB_1.CategoryRepository,
         DB_1.ProductRepository,
-        common_2.S3Service,
+        DB_1.UserRepository,
         common_2.CloudService])
 ], ProductService);
 //# sourceMappingURL=product.service.js.map

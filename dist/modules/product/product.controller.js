@@ -66,6 +66,14 @@ let ProductController = class ProductController {
         await this.productService.remove(params.productId, user);
         return (0, common_2.successResponse)();
     }
+    async addToWishlist(user, params) {
+        const product = await this.productService.addToWishlist(params.productId, user);
+        return (0, common_2.successResponse)({ data: { product } });
+    }
+    async removeFromWishlist(user, params) {
+        await this.productService.removeFromWishlist(params.productId, user);
+        return (0, common_2.successResponse)();
+    }
 };
 exports.ProductController = ProductController;
 __decorate([
@@ -166,6 +174,24 @@ __decorate([
     __metadata("design:paramtypes", [update_product_dto_1.ProductParamDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "remove", null);
+__decorate([
+    (0, common_2.Auth)([common_2.RoleEnum.user]),
+    (0, common_1.Patch)(":productId/add-to-wishlist"),
+    __param(0, (0, common_2.User)()),
+    __param(1, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_product_dto_1.ProductParamDto]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "addToWishlist", null);
+__decorate([
+    (0, common_2.Auth)([common_2.RoleEnum.user]),
+    (0, common_1.Patch)(":productId/remove-from-wishlist"),
+    __param(0, (0, common_2.User)()),
+    __param(1, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_product_dto_1.ProductParamDto]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "removeFromWishlist", null);
 exports.ProductController = ProductController = __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
     (0, common_1.Controller)('product'),

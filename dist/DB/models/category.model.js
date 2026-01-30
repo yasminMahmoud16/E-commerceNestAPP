@@ -57,7 +57,7 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Category.prototype, "updatedBy", void 0);
 __decorate([
-    (0, mongoose_1.Prop)([{ type: mongoose_2.Types.ObjectId, ref: "Brand", }]),
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: "Brand", }] }),
     __metadata("design:type", Array)
 ], Category.prototype, "brands", void 0);
 __decorate([

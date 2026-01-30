@@ -26,7 +26,7 @@ exports.ProductModule = ProductModule = __decorate([
             ]),
         ],
         controllers: [product_controller_1.ProductController],
-        providers: [product_service_1.ProductService, DB_1.ProductRepository, DB_1.BrandRepository, DB_1.CategoryRepository, common_2.S3Service, common_2.CloudService],
+        providers: [product_service_1.ProductService, DB_1.ProductRepository, DB_1.BrandRepository, DB_1.CategoryRepository, common_2.S3Service, common_2.CloudService, DB_1.UserRepository],
     })
 ], ProductModule);
 //# sourceMappingURL=product.module.js.map
