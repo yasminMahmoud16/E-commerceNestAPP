@@ -22,4 +22,5 @@ __exportStar(require("./responses.interface"), exports);
 __exportStar(require("./brand.interface"), exports);
 __exportStar(require("./category.interface"), exports);
 __exportStar(require("./product.interface"), exports);
+__exportStar(require("./cart.interface"), exports);
 //# sourceMappingURL=index.js.map

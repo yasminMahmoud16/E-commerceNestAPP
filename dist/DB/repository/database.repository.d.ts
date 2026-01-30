@@ -8,7 +8,7 @@ export declare abstract class DatabaseRepository<TRowDocument, TDocument = Hydra
         filter?: RootFilterQuery<TRowDocument>;
         select?: ProjectionType<TRowDocument> | null;
         options?: QueryOptions<TDocument> | null;
-    }): Promise<Lean<TDocument> | TDocument | null>;
+    }): Promise<TDocument | null>;
     findById({ id, select, options }: {
         id?: RootFilterQuery<TRowDocument> | any;
         select?: ProjectionType<TRowDocument> | null;
@@ -58,7 +58,7 @@ export declare abstract class DatabaseRepository<TRowDocument, TDocument = Hydra
         filter?: RootFilterQuery<TRowDocument>;
         update?: UpdateQuery<TDocument>;
         options?: QueryOptions<TDocument> | null;
-    }): Promise<TDocument | Lean<TDocument> | null>;
+    }): Promise<TDocument | null>;
     deleteOne({ filter, }: {
         filter: RootFilterQuery<TRowDocument>;
     }): Promise<DeleteResult>;

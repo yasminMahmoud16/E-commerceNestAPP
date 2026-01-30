@@ -21,6 +21,7 @@ const common_2 = require("./common");
 const brand_module_1 = require("./modules/brand/brand.module");
 const category_module_1 = require("./modules/category/category.module");
 const product_module_1 = require("./modules/product/product.module");
+const cart_module_1 = require("./modules/cart/cart.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,7 +38,8 @@ exports.AppModule = AppModule = __decorate([
             user_module_1.UserModule,
             brand_module_1.BrandModule,
             category_module_1.CategoryModule,
-            product_module_1.ProductModule
+            product_module_1.ProductModule,
+            cart_module_1.CartModule
         ],
         controllers: [app_controller_1.AppController, auth_controller_1.AuthenticationController],
         providers: [app_service_1.AppService, common_2.S3Service],
